@@ -12,6 +12,11 @@ from homeassistant.components.media_player.const import (MediaPlayerEntityFeatur
 from functools import partial
 from typing import Any
 
+try:
+    from miio import Device, DeviceException
+except ImportError:
+  pass
+
 REQUIREMENTS = ['python-miio>=0.3.7']
 
 DOMAIN = 'mi_gateway_radio'
@@ -42,7 +47,7 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
 
 async def async_setup_platform(hass, config, async_add_devices, discovery_info=None):
     """Set up the Xiaomi Gateway miio platform."""
-    from miio import Device, DeviceException
+    
     if DATA_KEY not in hass.data:
         hass.data[DATA_KEY] = {}
 
@@ -96,7 +101,6 @@ class XiaomiGateway(MediaPlayerEntity):
 
     async def _try_command(self, mask_error, func, *args, **kwargs):
         """Call a device command handling error messages."""
-        from miio import DeviceException
         try:
             result = await self.hass.async_add_job(
                 partial(func, *args, **kwargs))
@@ -189,7 +193,6 @@ class XiaomiGateway(MediaPlayerEntity):
 
     async def async_update(self):
         """Fetch state from Gateway."""
-        from miio import DeviceException
 
         try:
             state = await self.hass.async_add_job(
