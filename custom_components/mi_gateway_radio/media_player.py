@@ -156,6 +156,7 @@ class XiaomiGateway(MediaPlayerEntity):
             'play_fm', ['on'])
         
     async def async_turn_off(self):
+        _LOGGER.debug("async_turn_off")
         await self._try_command(
             "Turning the Gateway off failed.", self._device.send,
             'play_fm', ['off'])
