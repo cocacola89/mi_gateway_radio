@@ -105,7 +105,7 @@ output.file.hls(playlist="live.m3u8", 
 ```
 
 > **⚠️ ATTENTION ⚠️** \
-Don't forget to enable **advanced** configuration otions in your AzuraCast installation. Otherwise your custom **Liquidsoap** config will not be applied.  
+Don't forget to enable **advanced** configuration options in your AzuraCast installation. Otherwise your custom **Liquidsoap** config will not be applied.  
 
 
 ## References
