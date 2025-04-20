@@ -85,6 +85,8 @@ class XiaomiGateway(MediaPlayerEntity):
         """Initialize the entity."""
         self._device = device
 
+        self._host = config.get(CONF_HOST)
+        self._token = config.get(CONF_TOKEN)
         self._name = config.get(CONF_NAME)
         self._relay = config.get(CONF_RELAY)
         self._skip_update = False
@@ -199,7 +201,15 @@ class XiaomiGateway(MediaPlayerEntity):
             session = async_get_clientsession(self.hass)
 
             async with async_timeout.timeout(REQUEST_TIMEOUT):
-                req = await session.request('POST', self._relay + '/send/play_specify_fm', json={ 'id': self._id, 'type': 0, 'url': media_id })
+                req = await session.request(
+                    'POST', 
+                    self._relay + '/send/play_specify_fm', 
+                    json={
+                        'address': self._host,
+                        'token': self._token,
+                        'args': { 'id': self._id, 'type': 0, 'url': media_id }
+                    }
+                )
 
             json_response = await req.json(content_type=None)
 
