@@ -1,0 +1,9 @@
+{
+    "domain": "mi_gateway_radio",
+    "name": "Mi Gateway 2 Radio",
+    "version": "1.0",
+    "documentation": "https://github.com/cocacola89/mi_gateway_radio",
+    "dependencies": [],
+    "codeowners": [ "@cocacola89" ],
+    "requirements": []
+  }
