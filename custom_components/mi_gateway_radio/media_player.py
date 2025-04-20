@@ -188,9 +188,10 @@ class XiaomiGateway(MediaPlayerEntity):
         """Play the url specified."""
         self._id += 1
         _LOGGER.info("async_play_media %s %s", self._id, media_id)
-        await self._try_command(
-            "Playing media failed.", self._device.send,
-            'play_specify_fm', { 'id': self._id, 'type': 0, 'url': media_id })
+        self._device.send('play_specify_fm', { 'id': self._id, 'type': 0, 'url': media_id })
+        # await self._try_command(
+        #     "Playing media failed.", self._device.send,
+        #     'play_specify_fm', { 'id': self._id, 'type': 0, 'url': media_id })
 
     async def async_update(self):
         """Fetch state from Gateway."""
