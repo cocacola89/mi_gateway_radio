@@ -206,7 +206,7 @@ class XiaomiGateway(MediaPlayerEntity):
             _LOGGER.info("Response received from relay: %s", json_response)
 
         except (asyncio.TimeoutError, aiohttp.ClientError):
-            _LOGGER.error("Timeout connecting to relay")
+            _LOGGER.exception("Timeout connecting to relay")
 
     async def async_update(self):
         """Fetch state from Gateway."""
