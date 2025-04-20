@@ -46,10 +46,10 @@ async def async_setup_platform(hass, config, async_add_devices, discovery_info=N
     if DATA_KEY not in hass.data:
         hass.data[DATA_KEY] = {}
 
-    _LOGGER.info("Initializing Xiaomi Gateway with host %s (token %s...)", host, token[:5])
-
     host = config.get(CONF_HOST)
     token = config.get(CONF_TOKEN)
+
+    _LOGGER.info("Initializing Xiaomi Gateway with host %s (token %s...)", host, token[:5])
 
     try:
         miio_device = Device(host, token)
