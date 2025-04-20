@@ -196,14 +196,16 @@ class XiaomiGateway(MediaPlayerEntity):
     async def async_play_media(self, media_type: MediaType | str, media_id: str, **kwargs: Any):
         """Play the url specified."""
         self._id += 1
-        _LOGGER.info("async_play_media")
+
+        relay_url = self._relay + '/send/play_specify_fm'
+        _LOGGER.info("async_play_media %s", relay_url)
         try:
             session = async_get_clientsession(self.hass)
 
             async with async_timeout.timeout(REQUEST_TIMEOUT):
                 req = await session.request(
                     'POST', 
-                    self._relay + '/send/play_specify_fm', 
+                    relay_url, 
                     json={
                         'address': self._host,
                         'token': self._token,
