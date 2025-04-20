@@ -3,12 +3,15 @@
 import logging
 import voluptuous as vol
 import asyncio
+import aiohttp
+import async_timeout
 import homeassistant.helpers.config_validation as cv
 
 from homeassistant.const import (CONF_HOST, CONF_NAME, CONF_TOKEN, STATE_OFF, STATE_ON)
 from homeassistant.exceptions import PlatformNotReady
 from homeassistant.components.media_player import (MediaPlayerEntity, PLATFORM_SCHEMA)
 from homeassistant.components.media_player.const import (MediaPlayerEntityFeature, MediaType) 
+from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from functools import partial
 from typing import Any
 
@@ -31,7 +34,9 @@ DATA_KEY = 'media_player.mi_gateway_radio'
 ATTR_STATE_PROPERTY = 'state_property'
 ATTR_STATE_VALUE = 'state_value'
 
-CONF_GATEWAYS = 'gateways'
+CONF_RELAY = 'relay'
+
+REQUEST_TIMEOUT = 5
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -42,6 +47,7 @@ SUPPORTED_FEATURES = MediaPlayerEntityFeature.TURN_ON | MediaPlayerEntityFeature
 PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
     vol.Required(CONF_NAME): cv.string,
     vol.Required(CONF_HOST): cv.string,
+    vol.Required(CONF_RELAY): cv.string,
     vol.Required(CONF_TOKEN): vol.All(cv.string, vol.Length(min=32, max=32)),
 })
 
@@ -80,6 +86,7 @@ class XiaomiGateway(MediaPlayerEntity):
         self._device = device
 
         self._name = config.get(CONF_NAME)
+        self._relay = config.get(CONF_RELAY)
         self._skip_update = False
 
         self._model = device_info.model
@@ -187,11 +194,19 @@ class XiaomiGateway(MediaPlayerEntity):
     async def async_play_media(self, media_type: MediaType | str, media_id: str, **kwargs: Any):
         """Play the url specified."""
         self._id += 1
-        _LOGGER.info("async_play_media %s %s", self._id, media_id)
-        self._device.send('play_specify_fm', { 'id': self._id, 'type': 0, 'url': media_id })
-        # await self._try_command(
-        #     "Playing media failed.", self._device.send,
-        #     'play_specify_fm', { 'id': self._id, 'type': 0, 'url': media_id })
+        _LOGGER.info("async_play_media")
+        try:
+            session = async_get_clientsession(self.hass)
+
+            async with async_timeout.timeout(REQUEST_TIMEOUT):
+                req = await session.request('POST', self._relay + '/send/play_specify_fm', json={ 'id': self._id, 'type': 0, 'url': media_id })
+
+            json_response = await req.json()
+
+            _LOGGER.info("Response received from relay: %s", json_response)
+
+        except (asyncio.TimeoutError, aiohttp.ClientError):
+            _LOGGER.error("Timeout connecting to relay")
 
     async def async_update(self):
         """Fetch state from Gateway."""
