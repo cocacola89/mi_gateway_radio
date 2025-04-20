@@ -201,7 +201,7 @@ class XiaomiGateway(MediaPlayerEntity):
             async with async_timeout.timeout(REQUEST_TIMEOUT):
                 req = await session.request('POST', self._relay + '/send/play_specify_fm', json={ 'id': self._id, 'type': 0, 'url': media_id })
 
-            json_response = await req.json()
+            json_response = await req.json(content_type=None)
 
             _LOGGER.info("Response received from relay: %s", json_response)
 
