@@ -141,35 +141,35 @@ class XiaomiGateway(MediaPlayerEntity):
     def supported_features(self):
         return SUPPORTED_FEATURES
 
-    async def turn_on(self):
+    async def async_turn_on(self):
         await self._try_command(
             "Turning the Gateway on failed.", self._device.send,
             'play_fm', ['on'])
         
-    async def turn_off(self):
+    async def async_turn_off(self):
         await self._try_command(
             "Turning the Gateway off failed.", self._device.send,
             'play_fm', ['off'])
 
-    async def volume_up(self):
+    async def async_volume_up(self):
         volume = round(self._volume * 100) + 1
         await self._try_command(
             "Turning the Gateway volume failed.", self._device.send,
             'set_fm_volume', [volume])
         
-    async def volume_down(self):
+    async def async_volume_down(self):
         volume = round(self._volume * 100) - 1
         await self._try_command(
             "Turning the Gateway volume failed.", self._device.send,
             'set_fm_volume', [volume])
 
-    async def set_volume_level(self, volume):
+    async def async_set_volume_level(self, volume):
         volset = round(volume * 100)
         await self._try_command(
             "Setting the Gateway volume failed.", self._device.send,
             'set_fm_volume', [volset])
 
-    async def mute_volume(self, mute):
+    async def async_mute_volume(self, mute):
         """Send mute command."""
         volume = 10
         if self._muted == False:
@@ -184,7 +184,7 @@ class XiaomiGateway(MediaPlayerEntity):
             else:
                 self._muted = False
         
-    async def play_media(self, media_type: MediaType | str, media_id: str, **kwargs: Any):
+    async def async_play_media(self, media_type: MediaType | str, media_id: str, **kwargs: Any):
         """Play the url specified."""
         self._id += 1
         await self._try_command(
